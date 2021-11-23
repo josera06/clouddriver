@@ -9,8 +9,11 @@ import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class UserService {
 
     private final UserMapper userMapper;
@@ -32,10 +35,16 @@ public class UserService {
         random.nextBytes(salt);
         String encodedSalt = Base64.getEncoder().encodeToString(salt);
         String hashedPassword = hashService.getHashedValue(user.getPassword(), encodedSalt);
-        return userMapper.insert(new User(null, user.getUsername(), encodedSalt, hashedPassword, user.getFirstName(), user.getLastName()));
+        User newUser = new User(null, user.getUsername(), encodedSalt, hashedPassword, user.getFirstName(), user.getLastName());
+        log.info("Usuario creado: " + newUser.toString());
+        return userMapper.insert(newUser);
     }
 
     public User getUser(String username) {
         return userMapper.getUser(username);
+    }
+    
+    public List<User> getUsers(){
+        return userMapper.getUsers();
     }
 }

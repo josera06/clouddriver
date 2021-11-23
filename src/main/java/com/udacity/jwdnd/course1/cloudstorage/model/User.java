@@ -2,7 +2,7 @@ package com.udacity.jwdnd.course1.cloudstorage.model;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+
 public class User {
 
     private Integer userId;
@@ -19,7 +19,6 @@ public class User {
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
-        log.info("***************Creando usuario***************************");
     }
 
     public Integer getUserId() {
@@ -68,6 +67,19 @@ public class User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("User{userId=").append(userId);
+        sb.append(", username=").append(username);
+        sb.append(", salt=").append(salt);
+        sb.append(", password=").append(password);
+        sb.append(", firstName=").append(firstName);
+        sb.append(", lastName=").append(lastName);
+        sb.append('}');
+        return sb.toString();
     }
 
     

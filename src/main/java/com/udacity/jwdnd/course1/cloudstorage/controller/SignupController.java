@@ -1,8 +1,9 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
-
 import com.udacity.jwdnd.course1.cloudstorage.model.User;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
+import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+@Slf4j
 @Controller()
 @RequestMapping("/signup")
 public class SignupController {
@@ -35,6 +37,11 @@ public class SignupController {
 
         if (signupError == null) {
             int rowsAdded = userService.createUser(user);
+            List<User> users = userService.getUsers();
+            for (Object user1 : users) {
+                log.info("Usuarios insertados: " + user1.toString());
+            }
+            
             if (rowsAdded < 0) {
                 signupError = "There was an error signing you up. Please try again.";
             }
