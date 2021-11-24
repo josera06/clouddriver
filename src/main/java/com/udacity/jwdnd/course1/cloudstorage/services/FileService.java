@@ -15,14 +15,8 @@ public class FileService {
         this.fileMaper = fileMaper;
     }
 
-    public int addFile(User user, File file) {
-
-        return fileMaper.insert(new File(null,
-                file.getFileName(),
-                file.getContentType(),
-                file.getFileSize(),
-                user.getUserId(),
-                file.getFileData()));
+    public int addFile(File file) {
+        return fileMaper.insert(file);
     }
     
     public File getFile(Integer fileId) {
@@ -32,5 +26,8 @@ public class FileService {
     public List<String> getFileNames() {
         return fileMaper.getFileNames();
     }
-
+    
+    public List<File> getFiles(){
+        return fileMaper.getFiles();
+    }
 }

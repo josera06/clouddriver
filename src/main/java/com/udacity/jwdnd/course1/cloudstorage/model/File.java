@@ -66,4 +66,18 @@ public class File {
         this.fileData = fileData;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("File{fileId=").append(fileId);
+        sb.append(", fileName=").append(fileName);
+        sb.append(", contentType=").append(contentType);
+        sb.append(", fileSize=").append(fileSize);
+        sb.append(", userId=").append(userId);
+        sb.append(", fileData=").append(fileData);
+        sb.append('}');
+        return sb.toString();
+    }
+
+    
 }
