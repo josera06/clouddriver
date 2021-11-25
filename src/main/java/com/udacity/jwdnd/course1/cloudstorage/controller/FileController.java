@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,13 +19,21 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Controller
-@RequestMapping("/file-upload")
+@RequestMapping()
 public class FileController {
 
     @Autowired
     private FileService fileService;
+    
+    @GetMapping("/deleteFile")
+    public String eliminar(File file) {
+        log.info("Archivo a eliminar: " + file.toString());
+        int borrador = fileService.deleteFile(file);
+        log.info("Registros borrados: " + borrador);
+        return "redirect:/home";
+    }
 
-    @PostMapping()
+    @PostMapping("/file-upload")
     public String addFile(@RequestParam("fileUpload") MultipartFile fileUpload, Model model) throws IOException {
         InputStream fis = fileUpload.getInputStream();
 

@@ -11,7 +11,7 @@
                     <body class="p-3 mb-2 bg-light text-black">
                         <nav class="navbar navbar-expand-sm navbar-dark bg-dark p-0">
                             <div class="container">
-                                <a th:href="@{/}" class="navbar-brand" th:text="#{plantilla.titulo}">Control Clientes</a>
+                                <a th:href="@{/}" class="navbar-brand" th:text="#{plantilla.titulo}">Titulo</a>
                                 <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
                                     <span class="navbar-toggler-icon"></span>
                                 </button>
@@ -85,7 +85,7 @@
                                                         <tr th:each="file, contador : ${files}">
                                                             <td>
                                                                 <a target="_blank" class="btn btn-success">View</a>
-                                                                <a  class="btn btn-danger">Delete</a>
+                                                                <a th:href="@{/deleteFile(fileId=${file.fileId})}"class="btn btn-danger">Delete</a>
                                                             </td>
                                                             <td>[[${contador.count}]]</td>
                                                             <td>[[${file.fileName} + ' ' + ${file.contentType}]]</td>
@@ -99,25 +99,27 @@
                                         <button style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showNoteModal()">
                                             + Add a New Note
                                         </button>
-
+                                        <div th:if="${notes != null and !notes.empty}"></div>
                                         <div class="table-responsive">
                                             <table class="table table-striped" id="userTable">
                                                 <thead>
                                                     <tr>
                                                         <th style="width: 20%" scope="col"></th>
+                                                        <th style="width: 20%" scope="col">#</th>
                                                         <th style="width: 20%" scope="col">Title</th>
                                                         <th style="width: 60%" scope="col">Description</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr>
-                                                        <td>
-                                                            <button type="button" class="btn btn-success">Edit</button>
-                                                            <a class="btn btn-danger">Delete</a>
-                                                        </td>
-                                                        <th scope="row">Example Note Title</th>
-                                                        <td>Example Note Description </td>
-                                                    </tr>
+                                                        <tr th:each="note, contador : ${notes}">
+                                                            <td>
+                                                                <button type="button" class="btn btn-success">Edit</button>
+                                                                <a th:href="@{/deleteNote(noteId=${note.noteId})}"class="btn btn-danger">Delete</a>
+                                                            </td>
+                                                            <td>[[${contador.count}]]</td>
+                                                            <td>[[${note.notetitle}]]</td>
+                                                            <td>[[${note.notedescription}]]</td>
+                                                        </tr>                                                    
                                                 </tbody>
                                             </table>
                                         </div>

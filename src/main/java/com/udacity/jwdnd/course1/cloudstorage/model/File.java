@@ -8,6 +8,13 @@ public class File {
     private String fileSize;
     private Integer userId;
     private byte[] fileData;
+    
+    public File(){
+    }
+
+    public File(Integer fileId) {
+        this.fileId = fileId;
+    }
 
     public File(Integer fileId, String fileName, String contentType, String fileSize, Integer userId, byte[] fileData) {
         this.fileId = fileId;
