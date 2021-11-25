@@ -7,9 +7,14 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class NoteService {
+
     private final NoteMapper noteMapper;
-    
-    public int deleteFile(Note note){
+
+    public int updateNote(Note note) {
+        return noteMapper.updateNote(note);
+    }
+
+    public int deleteNote(Note note) {
         return noteMapper.deleteNote(note);
     }
 
@@ -20,16 +25,16 @@ public class NoteService {
     public int addNote(Note note) {
         return noteMapper.insert(note);
     }
-    
-    public Note getFile(Integer noteId) {
+
+    public Note getNote(Integer noteId) {
         return noteMapper.getNote(noteId);
     }
 
-    public List<String> getFileNames() {
+    public List<String> getNotesNames() {
         return noteMapper.getNotesTitles();
     }
-    
-    public List<Note> getFiles(){
+
+    public List<Note> getNotes() {
         return noteMapper.getNotes();
     }
 }

@@ -1,7 +1,9 @@
 
 package com.udacity.jwdnd.course1.cloudstorage.model;
 
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class Note {
     private Integer noteId;
     private String notetitle;
@@ -16,6 +18,7 @@ public class Note {
     }
 
     public Note() {
+        //log.info("Creando un objeto nota.......................................");
     }
 
     public Integer getNoteId() {
