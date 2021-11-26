@@ -4,13 +4,19 @@ import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import com.udacity.jwdnd.course1.cloudstorage.mappers.CredentialMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
 public class CredentialService {
 
     private final CredentialMapper credentialsMapper;
+    
+    @Autowired
+    private EncryptionService encriptionService;
 
     public int updateCredential(Credential credential) {
+        credential.setKey(encriptionService.generateKey());
+        credential.setPassword(encriptionService.encryptValue(credential.getPassword(), credential.getKey()));        
         return credentialsMapper.updateCredential(credential);
     }
 
@@ -23,11 +29,15 @@ public class CredentialService {
     }
 
     public int addCredential(Credential credential) {
+        credential.setKey(encriptionService.generateKey());
+        credential.setPassword(encriptionService.encryptValue(credential.getPassword(), credential.getKey()));
         return credentialsMapper.insertCredential(credential);
     }
 
     public Credential getCredential(Integer credentialId) {
-        return credentialsMapper.getCredential(credentialId);
+        Credential credential = credentialsMapper.getCredential(credentialId);
+        credential.setPassword(encriptionService.decryptValue(credential.getPassword(), credential.getKey()));
+        return credential;
     }
 
     public List<Credential> getAllCredentials() {

@@ -1,6 +1,8 @@
 package com.udacity.jwdnd.course1.cloudstorage.model;
 
+import com.udacity.jwdnd.course1.cloudstorage.services.EncryptionService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Slf4j
 public class Credential {
@@ -12,6 +14,9 @@ public class Credential {
     private String password;
     private Integer userId;
 
+    @Autowired
+    private EncryptionService encriptionService;
+    
     public Credential() {
     }
 
@@ -83,5 +88,9 @@ public class Credential {
         sb.append(", userId=").append(userId);
         sb.append('}');
         return sb.toString();
+    }
+
+    public void setKey(byte[] key) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

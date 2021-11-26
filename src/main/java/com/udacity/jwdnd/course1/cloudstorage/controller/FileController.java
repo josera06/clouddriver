@@ -4,6 +4,7 @@ import static com.sun.org.apache.xerces.internal.util.FeatureState.is;
 import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.model.Note;
+import com.udacity.jwdnd.course1.cloudstorage.model.User;
 import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
@@ -24,6 +25,7 @@ import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,14 +49,23 @@ public class FileController {
     @Autowired
     private CredentialService credentialsService;
 
+    private final CredentialService credentialService;
+    private final UserService userService;
+
+    public FileController(UserService userService, CredentialService credentialService) {
+        this.userService = userService;
+        this.credentialService = credentialService;
+    }
+
     @GetMapping("/viewFile")
-    public void viewFile(File file, HttpServletResponse response) throws FileNotFoundException, IOException {
+    public void viewFile(File file, Authentication authentication, HttpServletResponse response) throws FileNotFoundException, IOException {
+        User user = userService.getUser(authentication.getPrincipal().toString());
+        file.setUserId(user.getUserId());
         File archivoRecuperado = fileService.getFile(file.getFileId());
-        byte[] output = archivoRecuperado.getFileData();
+        
 
         log.info("Archivo buscado: " + file.toString());
         log.info("Archivo recuperado: " + archivoRecuperado.toString());
-        FileOutputStream os = null;
 
         // gets file name and file blob data
         String fileName = archivoRecuperado.getFileName();

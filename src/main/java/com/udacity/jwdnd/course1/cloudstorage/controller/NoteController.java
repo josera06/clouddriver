@@ -2,11 +2,15 @@ package com.udacity.jwdnd.course1.cloudstorage.controller;
 
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.model.Note;
+import com.udacity.jwdnd.course1.cloudstorage.model.User;
+import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
 import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
+import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -22,9 +26,19 @@ public class NoteController {
     @Autowired
     private NoteService noteService;
 
+    private final CredentialService credentialService;
+    private final UserService userService;
+
+    public NoteController(UserService userService, CredentialService credentialService) {
+        this.userService = userService;
+        this.credentialService = credentialService;
+    }
+
     @PostMapping("/saveNote")
-    public String guardar(@Valid Note note, Errors errores, Model model) {
-        
+    public String guardar(@Valid Note note, Authentication authentication, Errors errores, Model model) {
+        User user = userService.getUser(authentication.getPrincipal().toString());
+        note.setUserid(user.getUserId());
+
         if (errores.hasErrors()) {
             return "home";
         }
