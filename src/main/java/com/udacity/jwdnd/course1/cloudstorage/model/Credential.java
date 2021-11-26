@@ -3,7 +3,7 @@ package com.udacity.jwdnd.course1.cloudstorage.model;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class Credentials {
+public class Credential {
 
     private Integer credentialId;
     private String url;
@@ -12,10 +12,10 @@ public class Credentials {
     private String password;
     private Integer userId;
 
-    public Credentials() {
+    public Credential() {
     }
 
-    public Credentials(Integer credentialId, String url, String username, String key, String password, Integer userId) {
+    public Credential(Integer credentialId, String url, String username, String key, String password, Integer userId) {
         this.credentialId = credentialId;
         this.url = url;
         this.username = username;

@@ -1,8 +1,10 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
+import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.model.Note;
 import com.udacity.jwdnd.course1.cloudstorage.model.User;
+import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
 import java.util.List;
@@ -26,15 +28,21 @@ public class HomeController {
 
     @Autowired
     private NoteService noteService;
+    
+    @Autowired
+    private CredentialService credentialService;
 
     @GetMapping()
-    public String getHomePage(@ModelAttribute("note") Note note, BindingResult bindingResult, Model model) {
+    public String getHomePage(@ModelAttribute("note") Note note,@ModelAttribute("credential") Credential credential, BindingResult bindingResult, Model model) {
         List<File> files = fileService.getFiles();
         List<Note> notes = noteService.getNotes();
+        List<Credential> credentials = credentialService.getAllCredentials();
         model.addAttribute("files", files);
         model.addAttribute("notes", notes);
+        model.addAttribute("credentials", credentials);
         log.info("Listado de archivos: " + files);
         log.info("Listado de notas: " + notes);
+        log.info("Listado de credenciales: " + credentials);
         //log.info("Usuario: "+ user.toString());
         return "home";
     }

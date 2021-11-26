@@ -1,12 +1,17 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
+import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
+import com.udacity.jwdnd.course1.cloudstorage.model.Note;
+import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
+import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,7 +29,13 @@ public class FileController {
 
     @Autowired
     private FileService fileService;
-    
+
+    @Autowired
+    private NoteService noteService;
+
+    @Autowired
+    private CredentialService credentialsService;
+
     @GetMapping("/deleteFile")
     public String eliminar(File file) {
         log.info("Archivo a eliminar: " + file.toString());
@@ -34,7 +45,7 @@ public class FileController {
     }
 
     @PostMapping("/file-upload")
-    public String addFile(@RequestParam("fileUpload") MultipartFile fileUpload, Model model) throws IOException {
+    public String addFile(@RequestParam("fileUpload") MultipartFile fileUpload, Note note, Credential credential, Model model) throws IOException {
         InputStream fis = fileUpload.getInputStream();
 
         File newFile = new File(null, fileUpload.getOriginalFilename(), fileUpload.getContentType(), Long.toString(fileUpload.getSize()), 1, fis.readAllBytes());
@@ -48,14 +59,14 @@ public class FileController {
             log.info("Error: " + e.getMessage());
         }
 
-        List<String> archivos = fileService.getFileNames();
-
-        for (String archivo : archivos) {
-            log.info("Elemento: " + archivo);
-        }
+        List<Note> notes = noteService.getNotes();
+        model.addAttribute("notes", notes);
 
         List<File> files = fileService.getFiles();
         model.addAttribute("files", files);
+
+        List<Credential> allCredentials = credentialsService.getAllCredentials();
+        model.addAttribute("Credentials", allCredentials);
 
         return "home";
     }
