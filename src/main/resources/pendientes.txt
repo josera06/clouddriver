@@ -1,4 +1,3 @@
-* Download/view files
 * Encrypt the credential password
 * to save userId -> {files,notes,credentials}
 * to upgrade

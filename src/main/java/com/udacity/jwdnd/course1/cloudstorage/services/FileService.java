@@ -9,19 +9,19 @@ import org.springframework.stereotype.Service;
 public class FileService {
 
     private final FileMapper fileMapper;
-    
-    public int deleteFile(File file){
-        return fileMapper.deleteFile(file);
-    }
 
     public FileService(FileMapper fileMaper) {
         this.fileMapper = fileMaper;
     }
 
+    public int deleteFile(File file) {
+        return fileMapper.deleteFile(file);
+    }
+
     public int addFile(File file) {
         return fileMapper.insert(file);
     }
-    
+
     public File getFile(Integer fileId) {
         return fileMapper.getFile(fileId);
     }
@@ -29,8 +29,8 @@ public class FileService {
     public List<String> getFileNames() {
         return fileMapper.getFileNames();
     }
-    
-    public List<File> getFiles(){
+
+    public List<File> getFiles() {
         return fileMapper.getFiles();
     }
 }
