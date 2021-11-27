@@ -21,11 +21,11 @@ public interface NoteMapper {
     @Select("SELECT * FROM NOTES WHERE noteId = #{noteId}")
     Note getNote(Integer noteId);
 
-    @Select("SELECT notetitle FROM NOTES")
-    List<String> getNotesTitles();
+    @Select("SELECT notetitle FROM NOTES WHERE userid = #{userId}")
+    List<String> getNotesTitles(Integer userId);
 
-    @Select("SELECT * FROM NOTES")
-    List<Note> getNotes();
+    @Select("SELECT * FROM NOTES WHERE userid = #{userId}")
+    List<Note> getNotes(Integer userId);
 
     @Insert("INSERT INTO NOTES (notetitle,notedescription,userid) VALUES(#{notetitle}, #{notedescription}, #{userid})")
     @Options(useGeneratedKeys = true, keyProperty = "noteId")

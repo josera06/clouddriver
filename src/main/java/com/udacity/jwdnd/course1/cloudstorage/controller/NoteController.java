@@ -49,7 +49,7 @@ public class NoteController {
             noteService.updateNote(note);
             log.info("Actualizando..." + note.toString());
         }
-        List<Note> notes = noteService.getNotes();
+        List<Note> notes = noteService.getNotes(user.getUserId());
         model.addAttribute("notes", notes);
         return "redirect:/home";
     }

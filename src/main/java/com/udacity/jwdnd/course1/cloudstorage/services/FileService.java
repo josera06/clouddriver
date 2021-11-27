@@ -26,11 +26,11 @@ public class FileService {
         return fileMapper.getFile(fileId);
     }
 
-    public List<String> getFileNames() {
-        return fileMapper.getFileNames();
+    public List<String> getFileNames(Integer userId) {
+        return fileMapper.getFileNames(userId);
     }
 
-    public List<File> getFiles() {
-        return fileMapper.getFiles();
+    public List<File> getFiles(Integer userId) {
+        return fileMapper.getFiles(userId);
     }
 }

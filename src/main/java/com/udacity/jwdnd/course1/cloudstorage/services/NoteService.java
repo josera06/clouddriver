@@ -30,11 +30,11 @@ public class NoteService {
         return noteMapper.getNote(noteId);
     }
 
-    public List<String> getNotesNames() {
-        return noteMapper.getNotesTitles();
+    public List<String> getNotesNames(Integer userId) {
+        return noteMapper.getNotesTitles(userId);
     }
 
-    public List<Note> getNotes() {
-        return noteMapper.getNotes();
+    public List<Note> getNotes(Integer userId) {
+        return noteMapper.getNotes(userId);
     }
 }

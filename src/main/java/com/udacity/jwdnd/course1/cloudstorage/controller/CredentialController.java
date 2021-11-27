@@ -32,7 +32,7 @@ public class CredentialController {
     }
 
     @PostMapping("/saveCredential")
-    public String guardar(@Valid Credential credential, Authentication authentication,Errors errores, Model model) {
+    public String guardar(@Valid Credential credential, Authentication authentication, Errors errores, Model model) {
         User user = userService.getUser(authentication.getPrincipal().toString());
         credential.setUserId(user.getUserId());
 
@@ -47,11 +47,12 @@ public class CredentialController {
                 credentialService.updateCredential(credential);
                 log.info("Actualizando credential..." + credential.toString());
             }
-            List<Credential> credentials = credentialService.getAllCredentials();
-            model.addAttribute("credentials", credentials);
         } catch (Exception e) {
             log.info("Error al guardar Credenciales" + e.getMessage());
         }
+
+        List<Credential> credentials = credentialService.getAllCredentialsByUser(user.getUserId());
+        model.addAttribute("credentials", credentials);
 
         return "redirect:/home";
     }

@@ -62,7 +62,6 @@ public class FileController {
         User user = userService.getUser(authentication.getPrincipal().toString());
         file.setUserId(user.getUserId());
         File archivoRecuperado = fileService.getFile(file.getFileId());
-        
 
         log.info("Archivo buscado: " + file.toString());
         log.info("Archivo recuperado: " + archivoRecuperado.toString());
@@ -95,10 +94,11 @@ public class FileController {
     }
 
     @PostMapping("/file-upload")
-    public String addFile(@RequestParam("fileUpload") MultipartFile fileUpload, Note note, Credential credential, Model model) throws IOException {
+    public String addFile(@RequestParam("fileUpload") MultipartFile fileUpload, Note note, Credential credential, Authentication authentication, Model model) throws IOException {
+        User user = userService.getUser(authentication.getPrincipal().toString());
         InputStream fis = fileUpload.getInputStream();
 
-        File newFile = new File(null, fileUpload.getOriginalFilename(), fileUpload.getContentType(), Long.toString(fileUpload.getSize()), 1, fis.readAllBytes());
+        File newFile = new File(null, fileUpload.getOriginalFilename(), fileUpload.getContentType(), Long.toString(fileUpload.getSize()), user.getUserId(), fis.readAllBytes());
 
         log.info("Archivo: " + newFile.toString());
 
@@ -109,14 +109,14 @@ public class FileController {
             log.info("Error: " + e.getMessage());
         }
 
-        List<Note> notes = noteService.getNotes();
+        List<Note> notes = noteService.getNotes(user.getUserId());
         model.addAttribute("notes", notes);
-
-        List<File> files = fileService.getFiles();
-        model.addAttribute("files", files);
 
         List<Credential> allCredentials = credentialsService.getAllCredentials();
         model.addAttribute("Credentials", allCredentials);
+
+        List<File> files = fileService.getFiles(user.getUserId());
+        model.addAttribute("files", files);
 
         return "home";
     }

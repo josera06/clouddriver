@@ -17,11 +17,11 @@ public interface FileMapper {
     @Select("SELECT * FROM FILES WHERE fileId = #{fileId}")
     File getFile(Integer fileId);
 
-    @Select("SELECT fileName FROM FILES")
-    List<String> getFileNames();
+    @Select("SELECT fileName FROM FILES WHERE userid = #{userId}")
+    List<String> getFileNames(Integer userId);
     
-    @Select("SELECT * FROM FILES")
-    List<File> getFiles();
+    @Select("SELECT * FROM FILES WHERE userid = #{userId}")
+    List<File> getFiles(Integer userId);
 
     @Insert("INSERT INTO FILES (filename,contentType,fileSize,userId,fileData) VALUES(#{fileName}, #{contentType}, #{fileSize}, #{userId}, #{fileData})")
     @Options(useGeneratedKeys = true, keyProperty = "fileId")
