@@ -33,4 +33,9 @@ public class FileService {
     public List<File> getFiles(Integer userId) {
         return fileMapper.getFiles(userId);
     }
+    
+    public boolean existFileName(Integer userId, String newName){
+        List <String> names = getFileNames(userId);
+        return names.stream().anyMatch(name -> (name.equals(newName)));
+    }
 }

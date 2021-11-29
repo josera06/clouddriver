@@ -1,6 +1,5 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
-import static com.sun.org.apache.xerces.internal.util.FeatureState.is;
 import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.model.Note;
@@ -52,6 +51,8 @@ public class FileController {
     private final CredentialService credentialService;
     private final UserService userService;
 
+    
+
     public FileController(UserService userService, CredentialService credentialService) {
         this.userService = userService;
         this.credentialService = credentialService;
@@ -62,9 +63,6 @@ public class FileController {
         User user = userService.getUser(authentication.getPrincipal().toString());
         file.setUserId(user.getUserId());
         File archivoRecuperado = fileService.getFile(file.getFileId());
-
-        log.info("Archivo buscado: " + file.toString());
-        log.info("Archivo recuperado: " + archivoRecuperado.toString());
 
         // gets file name and file blob data
         String fileName = archivoRecuperado.getFileName();
@@ -86,27 +84,47 @@ public class FileController {
     }
 
     @GetMapping("/deleteFile")
-    public String eliminar(File file) {
-        log.info("Archivo a eliminar: " + file.toString());
-        int borrador = fileService.deleteFile(file);
-        log.info("Registros borrados: " + borrador);
+    public String eliminar(File file, Model model) {
+        String fileMessageError = null;
+        if (file != null) {
+            try {
+                int borrador = fileService.deleteFile(file);
+                fileMessageError = "The file was deleted";
+            } catch (Exception e) {
+                fileMessageError = "Error to delete file: " + e.getMessage();
+            }
+        } else {
+            fileMessageError = "The file not exist ";
+        }
+        model.addAttribute("fileMessage", fileMessageError);
         return "redirect:/home";
     }
 
     @PostMapping("/file-upload")
     public String addFile(@RequestParam("fileUpload") MultipartFile fileUpload, Note note, Credential credential, Authentication authentication, Model model) throws IOException {
+        String fileMessageError = null;
         User user = userService.getUser(authentication.getPrincipal().toString());
-        InputStream fis = fileUpload.getInputStream();
 
-        File newFile = new File(null, fileUpload.getOriginalFilename(), fileUpload.getContentType(), Long.toString(fileUpload.getSize()), user.getUserId(), fis.readAllBytes());
-
-        log.info("Archivo: " + newFile.toString());
-
-        try {
-            int rowsAdded = fileService.addFile(newFile);
-        } catch (Exception e) {
-            model.addAttribute("errorUpload", "errorUpload");
-            log.info("Error: " + e.getMessage());
+        if (user != null) {
+            if (!fileUpload.getOriginalFilename().equals("")) {
+                log.info("Archivo: " + fileUpload.getOriginalFilename());
+                InputStream fis = fileUpload.getInputStream();
+                File newFile = new File(null, fileUpload.getOriginalFilename(), fileUpload.getContentType(), Long.toString(fileUpload.getSize()), user.getUserId(), fis.readAllBytes());
+                log.info("Archivo: " + newFile.toString());
+                if (fileService.existFileName(user.getUserId(), fileUpload.getOriginalFilename())) {
+                    fileMessageError = "The FileName already exists.";
+                } else {
+                    try {
+                        int rowsAdded = fileService.addFile(newFile);
+                    } catch (Exception e) {
+                        fileMessageError = ("Error to upload file: " + e.getMessage());
+                    }
+                }
+            } else {
+                fileMessageError = ("Please, select a file to download");
+            }
+        } else {
+            fileMessageError = ("The user don´t exists");
         }
 
         List<Note> notes = noteService.getNotes(user.getUserId());
@@ -117,6 +135,12 @@ public class FileController {
 
         List<File> files = fileService.getFiles(user.getUserId());
         model.addAttribute("files", files);
+
+        if (fileMessageError == null) {
+            model.addAttribute("fileUploadSuccess", true);
+        } else {
+            model.addAttribute("fileMessageError", fileMessageError);
+        }
 
         return "home";
     }
