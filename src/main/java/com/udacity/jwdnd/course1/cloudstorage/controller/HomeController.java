@@ -53,10 +53,7 @@ public class HomeController {
         model.addAttribute("credentials", credentials);
         model.addAttribute("encryptionService", encryptionService);
 
-//        model.addAttribute("fileTab", false);
-        model.addAttribute("noteTab", true);
-//        model.addAttribute("credentialTab", false);
-        
+       
         log.info("Usuario: "+ user.toString());
         return "home";
     }

@@ -35,39 +35,52 @@ public class NoteController {
     }
 
     @PostMapping("/saveNote")
-    public String guardar(@Valid Note note, Authentication authentication, Errors errores, Model model) {
+    public String guardar(@Valid Note note, Authentication authentication, Model model) {
+        String fileMessageError = null;
         User user = userService.getUser(authentication.getPrincipal().toString());
         note.setUserid(user.getUserId());
 
-        if (errores.hasErrors()) {
-            return "home";
+        if (user != null) {
+            if (note.getNoteId() == null) {
+                try {
+                    noteService.addNote(note);
+                } catch (Exception e) {
+                    fileMessageError = "Error to save note: " + e.getMessage();
+                }
+            } else {
+                try {
+                    noteService.updateNote(note);
+                } catch (Exception e) {
+                    fileMessageError = "Error to edit note: " + e.getMessage();
+                }
+            }
         }
-        if (note.getNoteId() == null) {
-            noteService.addNote(note);
-            log.info("Insertantdo..." + note.toString());
-        } else {
-            noteService.updateNote(note);
-            log.info("Actualizando..." + note.toString());
-        }
+
         List<Note> notes = noteService.getNotes(user.getUserId());
         model.addAttribute("notes", notes);
-        
-        model.addAttribute("fileTab", false);
-        model.addAttribute("noteTab", true);
-        model.addAttribute("credentialTab", false);
-        
-        log.info("Model: "+model.toString());
-        
+
+        if (fileMessageError == null) {
+            model.addAttribute("fileUploadSuccess", true);
+        } else {
+            model.addAttribute("fileMessageError", fileMessageError);
+        }
         return "redirect:/home";
     }
 
     @GetMapping("/deleteNote")
-    public String eliminar(Note note) {
-        log.info("Nota a eliminar: " + note.toString());
-        int notas_borrados = noteService.deleteNote(note);
-        log.info("Registros borrados: " + notas_borrados);
+    public String eliminar(Note note, Model model) {
+        String fileMessageError = null;
+        try {
+            int notas_borrados = noteService.deleteNote(note);
+        } catch (Exception e) {
+            fileMessageError = "Error to delete note: " + e.getMessage();
+        }
+
+        if (fileMessageError == null) {
+            model.addAttribute("fileUploadSuccess", true);
+        } else {
+            model.addAttribute("fileMessageError", fileMessageError);
+        }
         return "redirect:/home";
     }
-
-    /*@GetMapping("/edit/{noteId}")*/
 }

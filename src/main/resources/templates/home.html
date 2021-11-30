@@ -40,6 +40,9 @@
                                 </div>
                             </div>
                         </nav>
+                        <div th:if="${message}">
+                            <h2 th:text="${message}"/>
+                        </div>
                         <div class="container">
                             <div id="logoutDiv">
                                 <form action="#" th:action="@{/logout}" method="POST">
@@ -47,39 +50,22 @@
                                 </form>
                             </div>
                             <div id="contentDiv" style="clear: right;">
-                                <div id="fileTab" th:if="${fileTab}">
-                                    <nav style="clear: right;">
-                                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                                            <a class="nav-item nav-link active" id="nav-files-tab" data-toggle="tab" href="#nav-files" role="tab" aria-controls="nav-files" aria-selected="true">Files</a>
-                                            <a class="nav-item nav-link" id="nav-notes-tab" data-toggle="tab" href="#nav-notes" role="tab" aria-controls="nav-notes" aria-selected="false">Notes</a>
-                                            <a class="nav-item nav-link" id="nav-credentials-tab" data-toggle="tab" href="#nav-credentials" role="tab" aria-controls="nav-credentials" aria-selected="false">Credentials</a>    
-                                        </div>
-                                    </nav>                                    
-                                </div>
-                                <div id="noteTab" th:if="${noteTab}" >
+                                <nav style="clear: right;">
                                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                                        <a class="nav-item nav-link" id="nav-files-tab" data-toggle="tab" href="#nav-files" role="tab" aria-controls="nav-files" aria-selected="true">Files</a>
-                                        <a class="nav-item nav-link active" id="nav-notes-tab" data-toggle="tab" href="#nav-notes" role="tab" aria-controls="nav-notes" aria-selected="false">Notes</a>
-                                        <a class="nav-item nav-link" id="nav-credentials-tab" data-toggle="tab" href="#nav-credentials" role="tab" aria-controls="nav-credentials" aria-selected="false">Credentials</a>                                            
-                                    </div>
-                                </div>
-                                <div id="credentialTab" th:if="${credentialTab}">
-                                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                                        <a class="nav-item nav-link" id="nav-files-tab" data-toggle="tab" href="#nav-files" role="tab" aria-controls="nav-files" aria-selected="true">Files</a>
+                                        <a class="nav-item nav-link active" id="nav-files-tab" data-toggle="tab" href="#nav-files" role="tab" aria-controls="nav-files" aria-selected="true">Files</a>
                                         <a class="nav-item nav-link" id="nav-notes-tab" data-toggle="tab" href="#nav-notes" role="tab" aria-controls="nav-notes" aria-selected="false">Notes</a>
-                                        <a class="nav-item nav-linkc active" id="nav-credentials-tab" data-toggle="tab" href="#nav-credentials" role="tab" aria-controls="nav-credentials" aria-selected="false">Credentials</a>                                            
+                                        <a class="nav-item nav-link" id="nav-credentials-tab" data-toggle="tab" href="#nav-credentials" role="tab" aria-controls="nav-credentials" aria-selected="false">Credentials</a>    
                                     </div>
-                                </div>
-
+                                </nav>                                    
                                 <div class="tab-content" id="nav-tabContent">
                                     <div class="tab-pane fade show active" id="nav-files" role="tabpanel" aria-labelledby="nav-files-tab">
-                                        <form action="#" enctype="multipart/form-data" th:action="@{/file-upload}" method="POST">
+                                        <form action="#" enctype="multipart/form-data" th:action="@{/file-upload}" method="POST"> 
                                             <div  id="success-msg" th:if="${fileUploadSuccess}" class="alert alert-dark">
                                                 You successfully upload the file.
                                             </div>
                                             <div id="error-msg" th:if="${fileMessageError}"  class="alert alert-danger">
                                                 <span th:text="${fileMessageError}"></span>
-                                            </div>                                            
+                                            </div>
                                             <div class="container">
                                                 <div class="row" style="margin: 1em;">
                                                     <div class="col-sm-2">

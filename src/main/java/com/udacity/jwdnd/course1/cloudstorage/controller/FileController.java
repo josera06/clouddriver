@@ -51,8 +51,6 @@ public class FileController {
     private final CredentialService credentialService;
     private final UserService userService;
 
-    
-
     public FileController(UserService userService, CredentialService credentialService) {
         this.userService = userService;
         this.credentialService = credentialService;
@@ -89,42 +87,45 @@ public class FileController {
         if (file != null) {
             try {
                 int borrador = fileService.deleteFile(file);
-                fileMessageError = "The file was deleted";
             } catch (Exception e) {
                 fileMessageError = "Error to delete file: " + e.getMessage();
             }
         } else {
             fileMessageError = "The file not exist ";
         }
-        model.addAttribute("fileMessage", fileMessageError);
+        if (fileMessageError == null) {
+            model.addAttribute("fileUploadSuccess", true);
+        } else {
+            model.addAttribute("fileMessageError", fileMessageError);
+        }
         return "redirect:/home";
     }
 
     @PostMapping("/file-upload")
-    public String addFile(@RequestParam("fileUpload") MultipartFile fileUpload, Note note, Credential credential, Authentication authentication, Model model) throws IOException {
+    public String addFile(@RequestParam("fileUpload") MultipartFile fileUpload, Note note, Credential credential, Authentication authentication, Model model) {
         String fileMessageError = null;
         User user = userService.getUser(authentication.getPrincipal().toString());
 
-        if (user != null) {
-            if (!fileUpload.getOriginalFilename().equals("")) {
-                log.info("Archivo: " + fileUpload.getOriginalFilename());
+        if (!fileUpload.getOriginalFilename().equals("")) {
+            try {
                 InputStream fis = fileUpload.getInputStream();
                 File newFile = new File(null, fileUpload.getOriginalFilename(), fileUpload.getContentType(), Long.toString(fileUpload.getSize()), user.getUserId(), fis.readAllBytes());
-                log.info("Archivo: " + newFile.toString());
                 if (fileService.existFileName(user.getUserId(), fileUpload.getOriginalFilename())) {
                     fileMessageError = "The FileName already exists.";
                 } else {
                     try {
                         int rowsAdded = fileService.addFile(newFile);
                     } catch (Exception e) {
-                        fileMessageError = "Error to upload file: " + e.getMessage();
+                        return "redirect:/uplosdStatus";
                     }
+
                 }
-            } else {
-                fileMessageError = "Please, select a file to download";
+            } catch (Exception e) {
+                fileMessageError = "Error to upload file: " + e.getMessage();
             }
+
         } else {
-            fileMessageError = "The user don´t exists";
+            fileMessageError = "Please, select a file to download";
         }
 
         List<Note> notes = noteService.getNotes(user.getUserId());
@@ -141,10 +142,6 @@ public class FileController {
         } else {
             model.addAttribute("fileMessageError", fileMessageError);
         }
-        
-        model.addAttribute("fileTab", true);
-        model.addAttribute("noteTab", false);
-        model.addAttribute("credentialTab", false);
 
         return "home";
     }

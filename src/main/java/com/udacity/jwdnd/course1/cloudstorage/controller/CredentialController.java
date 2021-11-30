@@ -32,40 +32,50 @@ public class CredentialController {
     }
 
     @PostMapping("/saveCredential")
-    public String guardar(@Valid Credential credential, Authentication authentication, Errors errores, Model model) {
+    public String guardar(@Valid Credential credential, Authentication authentication, Model model) {
+        String fileMessageError = null;
         User user = userService.getUser(authentication.getPrincipal().toString());
         credential.setUserId(user.getUserId());
 
-        if (errores.hasErrors()) {
-            return "home";
-        }
-        try {
+        if (user != null) {
             if (credential.getCredentialId() == null) {
-                credentialService.addCredential(credential);
-                log.info("Insertantdo credential..." + credential.toString());
+                try {
+                    credentialService.addCredential(credential);
+                } catch (Exception e) {
+                    fileMessageError = "Error to save credential: " + e.getMessage();
+                }
             } else {
-                credentialService.updateCredential(credential);
-                log.info("Actualizando credential..." + credential.toString());
+                try {
+                    credentialService.updateCredential(credential);
+                } catch (Exception e) {
+                    fileMessageError = "Error to edit credential: " + e.getMessage();
+                }
             }
-        } catch (Exception e) {
-            log.info("Error al guardar Credenciales" + e.getMessage());
         }
 
         List<Credential> credentials = credentialService.getAllCredentialsByUser(user.getUserId());
         model.addAttribute("credentials", credentials);
-        
-        model.addAttribute("fileTab", false);
-        model.addAttribute("noteTab", false);
-        model.addAttribute("credentialTab", true);
-
+        if (fileMessageError == null) {
+            model.addAttribute("fileUploadSuccess", true);
+        } else {
+            model.addAttribute("fileMessageError", fileMessageError);
+        }
         return "redirect:/home";
     }
 
     @GetMapping("/deleteCredential")
-    public String eliminar(Credential credential) {
-        log.info("Credential a eliminar: " + credential.toString());
-        int credential_borrados = credentialService.deleteCredentials(credential);
-        log.info("Registros borrados: " + credential_borrados);
+    public String eliminar(Credential credential, Model model) {
+        String fileMessageError = null;
+        try {
+            int credential_borrados = credentialService.deleteCredentials(credential);
+        } catch (Exception e) {
+            fileMessageError = "Error to delete credential: " + e.getMessage();
+        }
+        if (fileMessageError == null) {
+            model.addAttribute("fileUploadSuccess", true);
+        } else {
+            model.addAttribute("fileMessageError", fileMessageError);
+        }
         return "redirect:/home";
     }
 }
