@@ -117,14 +117,14 @@ public class FileController {
                     try {
                         int rowsAdded = fileService.addFile(newFile);
                     } catch (Exception e) {
-                        fileMessageError = ("Error to upload file: " + e.getMessage());
+                        fileMessageError = "Error to upload file: " + e.getMessage();
                     }
                 }
             } else {
-                fileMessageError = ("Please, select a file to download");
+                fileMessageError = "Please, select a file to download";
             }
         } else {
-            fileMessageError = ("The user don´t exists");
+            fileMessageError = "The user don´t exists";
         }
 
         List<Note> notes = noteService.getNotes(user.getUserId());
@@ -141,6 +141,10 @@ public class FileController {
         } else {
             model.addAttribute("fileMessageError", fileMessageError);
         }
+        
+        model.addAttribute("fileTab", true);
+        model.addAttribute("noteTab", false);
+        model.addAttribute("credentialTab", false);
 
         return "home";
     }

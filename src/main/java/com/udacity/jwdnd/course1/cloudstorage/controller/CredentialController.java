@@ -53,6 +53,10 @@ public class CredentialController {
 
         List<Credential> credentials = credentialService.getAllCredentialsByUser(user.getUserId());
         model.addAttribute("credentials", credentials);
+        
+        model.addAttribute("fileTab", false);
+        model.addAttribute("noteTab", false);
+        model.addAttribute("credentialTab", true);
 
         return "redirect:/home";
     }

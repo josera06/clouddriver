@@ -52,10 +52,12 @@ public class HomeController {
         model.addAttribute("notes", notes);
         model.addAttribute("credentials", credentials);
         model.addAttribute("encryptionService", encryptionService);
-        log.info("Listado de archivos: " + files);
-        log.info("Listado de notas: " + notes);
-        log.info("Listado de credenciales: " + credentials);
-        //log.info("Usuario: "+ user.toString());
+
+//        model.addAttribute("fileTab", false);
+        model.addAttribute("noteTab", true);
+//        model.addAttribute("credentialTab", false);
+        
+        log.info("Usuario: "+ user.toString());
         return "home";
     }
 

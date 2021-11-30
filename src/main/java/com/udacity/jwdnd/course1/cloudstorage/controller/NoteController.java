@@ -51,6 +51,13 @@ public class NoteController {
         }
         List<Note> notes = noteService.getNotes(user.getUserId());
         model.addAttribute("notes", notes);
+        
+        model.addAttribute("fileTab", false);
+        model.addAttribute("noteTab", true);
+        model.addAttribute("credentialTab", false);
+        
+        log.info("Model: "+model.toString());
+        
         return "redirect:/home";
     }
 
