@@ -17,6 +17,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Slf4j
 @Controller
@@ -35,8 +36,8 @@ public class NoteController {
     }
 
     @PostMapping("/saveNote")
-    public String guardar(@Valid Note note, Authentication authentication, Model model) {
-        String fileMessageError = null;
+    public String guardar(@Valid Note note, Authentication authentication, RedirectAttributes ra) {
+        String message = "";
         User user = userService.getUser(authentication.getPrincipal().toString());
         note.setUserid(user.getUserId());
 
@@ -44,43 +45,35 @@ public class NoteController {
             if (note.getNoteId() == null) {
                 try {
                     noteService.addNote(note);
+                    message = "Note saved successfully!";
                 } catch (Exception e) {
-                    fileMessageError = "Error to save note: " + e.getMessage();
+                    message = "Error to save note: " + e.getMessage();
                 }
             } else {
                 try {
                     noteService.updateNote(note);
+                    message = "Note modified successfully!";
                 } catch (Exception e) {
-                    fileMessageError = "Error to edit note: " + e.getMessage();
+                    message = "Error to edit note: " + e.getMessage();
                 }
             }
         }
 
-        List<Note> notes = noteService.getNotes(user.getUserId());
-        model.addAttribute("notes", notes);
-
-        if (fileMessageError == null) {
-            model.addAttribute("fileUploadSuccess", true);
-        } else {
-            model.addAttribute("fileMessageError", fileMessageError);
-        }
+        ra.addFlashAttribute("message", message);
         return "redirect:/home";
     }
 
     @GetMapping("/deleteNote")
-    public String eliminar(Note note, Model model) {
-        String fileMessageError = null;
+    public String eliminar(Note note,  RedirectAttributes ra) {
+        String message = "";
         try {
-            int notas_borrados = noteService.deleteNote(note);
+            noteService.deleteNote(note);
+            message = "Note deleted successfully!";
         } catch (Exception e) {
-            fileMessageError = "Error to delete note: " + e.getMessage();
+            message = "Error to delete note: " + e.getMessage();
         }
 
-        if (fileMessageError == null) {
-            model.addAttribute("fileUploadSuccess", true);
-        } else {
-            model.addAttribute("fileMessageError", fileMessageError);
-        }
+        ra.addFlashAttribute("message", message);
         return "redirect:/home";
     }
 }

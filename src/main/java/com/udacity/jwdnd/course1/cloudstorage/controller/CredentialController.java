@@ -17,6 +17,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Slf4j
 @Controller
@@ -32,8 +33,8 @@ public class CredentialController {
     }
 
     @PostMapping("/saveCredential")
-    public String guardar(@Valid Credential credential, Authentication authentication, Model model) {
-        String fileMessageError = null;
+    public String guardar(@Valid Credential credential, Authentication authentication, RedirectAttributes ra) {
+        String message = "";
         User user = userService.getUser(authentication.getPrincipal().toString());
         credential.setUserId(user.getUserId());
 
@@ -41,41 +42,35 @@ public class CredentialController {
             if (credential.getCredentialId() == null) {
                 try {
                     credentialService.addCredential(credential);
+                    message = "Credential saved successfully!";
                 } catch (Exception e) {
-                    fileMessageError = "Error to save credential: " + e.getMessage();
+                    message = "Error to save credential: " + e.getMessage();
                 }
             } else {
                 try {
                     credentialService.updateCredential(credential);
+                    message = "Credential modified successfully!";
                 } catch (Exception e) {
-                    fileMessageError = "Error to edit credential: " + e.getMessage();
+                    message = "Error to edit credential: " + e.getMessage();
                 }
             }
         }
 
-        List<Credential> credentials = credentialService.getAllCredentialsByUser(user.getUserId());
-        model.addAttribute("credentials", credentials);
-        if (fileMessageError == null) {
-            model.addAttribute("fileUploadSuccess", true);
-        } else {
-            model.addAttribute("fileMessageError", fileMessageError);
-        }
+        ra.addFlashAttribute("message", message);
         return "redirect:/home";
     }
 
     @GetMapping("/deleteCredential")
-    public String eliminar(Credential credential, Model model) {
-        String fileMessageError = null;
+    public String eliminar(Credential credential,  RedirectAttributes ra) {
+        String message = "Credential deleted successfully!";;
         try {
-            int credential_borrados = credentialService.deleteCredentials(credential);
+            credentialService.deleteCredentials(credential);
+            message = "Credential deleted successfully!";
         } catch (Exception e) {
-            fileMessageError = "Error to delete credential: " + e.getMessage();
+            message = "Error to delete credential: " + e.getMessage();
         }
-        if (fileMessageError == null) {
-            model.addAttribute("fileUploadSuccess", true);
-        } else {
-            model.addAttribute("fileMessageError", fileMessageError);
-        }
+
+        ra.addFlashAttribute("message", message);
         return "redirect:/home";
     }
 }
