@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Slf4j
 @Controller()
@@ -28,14 +30,14 @@ public class SignupController {
     }
 
     @PostMapping()
-    public String signupUser(@ModelAttribute User user, Model model) {
-        String signupError = null;
+    public RedirectView signupUser(@ModelAttribute User user, RedirectAttributes attributes, Model model) {
+        String message = null;
 
         if (!userService.isUsernameAvailable(user.getUsername())) {
-            signupError = "The username already exists.";
+            message = "The username already exists.";
         }
 
-        if (signupError == null) {
+        if (message == null) {
             int rowsAdded = userService.createUser(user);
             List<User> users = userService.getUsers();
             for (Object user1 : users) {
@@ -43,16 +45,24 @@ public class SignupController {
             }
             
             if (rowsAdded < 0) {
-                signupError = "There was an error signing you up. Please try again.";
+                message = "There was an error signing you up. Please try again.";
             }
         }
 
-        if (signupError == null) {
-            model.addAttribute("signupSuccess", true);
-        } else {
-            model.addAttribute("signupError", signupError);
+        if (message == null) {
+            RedirectView redirectView = new RedirectView("/login",true);
+            attributes.addFlashAttribute("signupSuccess", true);
+            attributes.addFlashAttribute("message", "You successfully signed up!");
+            log.info("Usuario insertado");
+            //model.addAttribute("signupSuccess", true);
+            return redirectView;
         }
 
-        return "signup";
+        RedirectView redirectView = new RedirectView("/signup",true);
+        attributes.addFlashAttribute("signupSuccess", true);
+        attributes.addFlashAttribute("message", message);
+        log.info("Error al ingresar usuario");
+        return redirectView;
+
     }
 }
