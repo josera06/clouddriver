@@ -14,6 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
 import java.io.File;
+import java.util.List;
+
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CloudStorageApplicationTests {
@@ -274,6 +276,216 @@ class CloudStorageApplicationTests {
 	}
 
 
+	@Test
+	public void testHomePage() {
+		// Try to access a random made-up URL.
+		driver.get("http://localhost:" + this.port + "/home");
+		Assertions.assertEquals("http://localhost:" + this.port + "/login", driver.getCurrentUrl());
+	}
+	@Test
+	public void testHomePageAfterLogout(){
+		doMockSignUp("Large File","Test","LFT","123");
+		doLogIn("LFT", "123");
+		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
+
+		doLogout(webDriverWait);
+		driver.get("http://localhost:" + this.port + "/home");
+		Assertions.assertEquals("http://localhost:" + this.port + "/login", driver.getCurrentUrl());
+	}
+
+
+	@Test
+	public void testAddNote(){
+		addNewNote("New note", "Description");
+		System.out.println("driver value" + driver.getPageSource());
+		Assertions.assertTrue(driver.getPageSource().contains("New note"));
+	}
+
+	@Test
+	public void testDeleteNote(){
+		addNewNote("New note", "Description");
+		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
+		doLogout(webDriverWait);
+		doLogIn("LFT", "123");
+		//Select Notes tab
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-notes-tab")));
+		WebElement navNotesTab = driver.findElement(By.id("nav-notes-tab"));
+		navNotesTab.click();
+		List<WebElement> elements = driver.findElements(By.id("btn-delete-notes-row"));
+		elements.get(elements.size()-1).click();
+
+		System.out.println("Todo listo");
+
+		Assertions.assertFalse(driver.getPageSource().contains("New note"));
+	}
+
+	@Test
+	public void testEditNote(){
+		addNewNote("New note", "Description");
+		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
+		doLogout(webDriverWait);
+		doLogIn("LFT", "123");
+		//Select Notes tab
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-notes-tab")));
+		WebElement navNotesTab = driver.findElement(By.id("nav-notes-tab"));
+		navNotesTab.click();
+		List<WebElement> elements = driver.findElements(By.id("btn-edit-notes-row"));
+		elements.get(elements.size()-1).click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-title")));
+		WebElement noteTitle = driver.findElement(By.id("note-title"));
+		noteTitle.sendKeys("Edited note");
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-description")));
+		WebElement noteDescription = driver.findElement(By.id("note-description"));
+		noteDescription.sendKeys("Description of edited note");
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-submit")));
+		WebElement btnSaveNote = driver.findElement(By.id("note-submit"));
+		btnSaveNote.click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-notes-tab")));
+		navNotesTab = driver.findElement(By.id("nav-notes-tab"));
+		navNotesTab.click();
+
+		System.out.println("Todo listo");
+
+		Assertions.assertTrue(driver.getPageSource().contains("Edited note"));
+	}
+
+	public void doLogout(WebDriverWait webDriverWait){
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("logoutBotton")));
+		WebElement logoutBotton = driver.findElement(By.id("logoutBotton"));
+		logoutBotton.click();
+	}
+
+	public void addNewNote(String titleNote,String descriptionNote){
+		doMockSignUp("Large File","Test","LFT","123");
+		doLogIn("LFT", "123");
+		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
+
+		//Select Notes tab
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-notes-tab")));
+		WebElement navNotesTab = driver.findElement(By.id("nav-notes-tab"));
+		navNotesTab.click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("btn-add-note")));
+		WebElement btnAddNote = driver.findElement(By.id("btn-add-note"));
+		btnAddNote.click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-title")));
+		WebElement noteTitle = driver.findElement(By.id("note-title"));
+		noteTitle.sendKeys(titleNote);
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-description")));
+		WebElement noteDescription = driver.findElement(By.id("note-description"));
+		noteDescription.sendKeys(descriptionNote);
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-submit")));
+		WebElement btnSaveNote = driver.findElement(By.id("note-submit"));
+		btnSaveNote.click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-notes-tab")));
+		navNotesTab = driver.findElement(By.id("nav-notes-tab"));
+		navNotesTab.click();
+	}
+
+	@Test
+	public void testDeleteCredential(){
+		addCredential("www.google.com", "josera","1234");
+		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
+		doLogout(webDriverWait);
+		doLogIn("LFT", "123");
+		//Select Notes tab
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-credentials-tab")));
+		WebElement navNotesTab = driver.findElement(By.id("nav-credentials-tab"));
+		navNotesTab.click();
+		List<WebElement> elements = driver.findElements(By.id("btn-delete-credential-row"));
+		elements.get(elements.size()-1).click();
+
+		System.out.println("Todo listo");
+
+		Assertions.assertFalse(driver.getPageSource().contains("www.google.com"));
+	}
+
+	@Test
+	public void testAddCredential(){
+		addCredential("www.google.com", "josera", "1234");
+		System.out.println("driver value" + driver.getPageSource());
+		Assertions.assertTrue(driver.getPageSource().contains("www.google.com"));
+	}
+
+	@Test
+	public void testEditCredential(){
+		addCredential("www.google.com" ,"josera", "1234");
+		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
+		doLogout(webDriverWait);
+		doLogIn("LFT", "123");
+		//Select Notes tab
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-credentials-tab")));
+		WebElement navCredentialTab = driver.findElement(By.id("nav-credentials-tab"));
+		navCredentialTab.click();
+		List<WebElement> elements = driver.findElements(By.id("btn-edit-credential-row"));
+		elements.get(elements.size()-1).click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-url")));
+		WebElement noteTitle = driver.findElement(By.id("credential-url"));
+		noteTitle.sendKeys("www.udacity.com");
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-username")));
+		WebElement credentialUsername = driver.findElement(By.id("credential-username"));
+		credentialUsername.sendKeys("jramon");
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-password")));
+		WebElement credentialPassword = driver.findElement(By.id("credential-password"));
+		credentialPassword.sendKeys("6547");
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-submit")));
+		WebElement btnSaveNote = driver.findElement(By.id("credential-submit"));
+		btnSaveNote.click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-credentials-tab")));
+		navCredentialTab = driver.findElement(By.id("nav-credentials-tab"));
+		navCredentialTab.click();
+
+		System.out.println("Todo listo");
+
+		Assertions.assertTrue(driver.getPageSource().contains("www.udacity.com"));
+	}
+
+	public void addCredential(String url,String username,String password){
+		doMockSignUp("Large File","Test","LFT","123");
+		doLogIn("LFT", "123");
+		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
+
+		//Select Notes tab
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-credentials-tab")));
+		WebElement navNotesTab = driver.findElement(By.id("nav-credentials-tab"));
+		navNotesTab.click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("btn_add_credential")));
+		WebElement btnAddNote = driver.findElement(By.id("btn_add_credential"));
+		btnAddNote.click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-url")));
+		WebElement credentialUrl = driver.findElement(By.id("credential-url"));
+		credentialUrl.sendKeys(url);
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-username")));
+		WebElement credentialUsername = driver.findElement(By.id("credential-username"));
+		credentialUsername.sendKeys(username);
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-password")));
+		WebElement credentialPassword = driver.findElement(By.id("credential-password"));
+		credentialPassword.sendKeys(password);
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-submit")));
+		WebElement btnSaveCredential = driver.findElement(By.id("credential-submit"));
+		btnSaveCredential.click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-credentials-tab")));
+		navNotesTab = driver.findElement(By.id("nav-credentials-tab"));
+		navNotesTab.click();
+	}
 
 }
-

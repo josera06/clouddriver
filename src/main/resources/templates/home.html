@@ -23,7 +23,7 @@
                         <div class="container">
                             <div id="logoutDiv">
                                 <form action="#" th:action="@{/logout}" method="POST">
-                                    <button type="submit" class="btn btn-secondary float-right">Logout</button>
+                                    <button type="submit" class="btn btn-secondary float-right" id="logoutBotton">Logout</button>
                                 </form>
                             </div>
                             <div id="contentDiv" style="clear: right;">
@@ -83,7 +83,7 @@
                                         </div>
                                     </div>
                                     <div class="tab-pane fade" id="nav-notes" role="tabpanel" aria-labelledby="nav-notes-tab">
-                                        <button style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showNoteModal()">
+                                        <button style="margin: 0.25em;" type="button" class="btn btn-info float-right" id="btn-add-note" onclick="showNoteModal()">
                                             + Add a New Note
                                         </button>
                                         <div th:if="${notes != null and !notes.empty}">
@@ -100,8 +100,8 @@
                                                     <tbody>
                                                         <tr th:each="note, contador : ${notes}">
                                                             <td>
-                                                                <button type="button" class="btn btn-success"  th:onclick="showNoteModal([[${note.noteId}]],[[${note.notetitle}]],[[${note.notedescription}]])">Edit</button>
-                                                                <a th:href="@{/deleteNote(noteId=${note.noteId})}"class="btn btn-danger">Delete</a>
+                                                                <button type="button" class="btn btn-success"  id="btn-edit-notes-row" th:onclick="showNoteModal([[${note.noteId}]],[[${note.notetitle}]],[[${note.notedescription}]])">Edit</button>
+                                                                <a th:href="@{/deleteNote(noteId=${note.noteId})}"class="btn btn-danger" id="btn-delete-notes-row">Delete</a>
                                                             </td>
                                                             <td>[[${contador.count}]]</td>
                                                             <td>[[${note.notetitle}]]</td>
@@ -137,14 +137,14 @@
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                        <button type="button" class="btn btn-primary" onclick="$('#noteSubmit').click();">Save changes</button>
+                                                        <button type="button" id="note-submit" class="btn btn-primary" onclick="$('#noteSubmit').click();">Save changes</button>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="tab-pane fade" id="nav-credentials" role="tabpanel" aria-labelledby="nav-credentials-tab">
-                                        <button style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showCredentialModal()">
+                                        <button style="margin: 0.25em;" type="button" class="btn btn-info float-right" id="btn_add_credential" onclick="showCredentialModal()">
                                             + Add a New Credential
                                         </button>
                                         <div th:if="${credentials != null and !credentials.empty}">
@@ -162,8 +162,8 @@
                                                     <tbody>
                                                         <tr th:each="credential, contador : ${credentials}">
                                                             <td>
-                                                                <button type="button" class="btn btn-success"  th:onclick="showCredentialModal([[${credential.credentialId}]],[[${credential.url}]],[[${credential.username}]],[[${encryptionService.decryptValue(credential.password,credential.key)}]])">Edit</button>
-                                                                <a th:href="@{/deleteCredential(credentialId=${credential.credentialId})}"class="btn btn-danger">Delete</a>
+                                                                <button type="button" class="btn btn-success"  id="btn-edit-credential-row"  th:onclick="showCredentialModal([[${credential.credentialId}]],[[${credential.url}]],[[${credential.username}]],[[${encryptionService.decryptValue(credential.password,credential.key)}]])">Edit</button>
+                                                                <a th:href="@{/deleteCredential(credentialId=${credential.credentialId})}"class="btn btn-danger" id="btn-delete-credential-row">Delete</a>
                                                             </td>
                                                             <td>[[${contador.count}]]</td>
                                                             <td>[[${credential.url}]]</td>
@@ -205,7 +205,7 @@
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                        <button type="button" class="btn btn-primary" onclick="$('#credentialSubmit').click();">Save changes</button>
+                                                        <button type="button"  id="credential-submit"  class="btn btn-primary" onclick="$('#credentialSubmit').click();">Save changes</button>
                                                     </div>
                                                 </div>
                                             </div>

@@ -84,6 +84,8 @@ public class FileController {
         if (fileUpload.getSize() > 1000000)  // 1MB approx (actually less though)
         {
             message = "File is too big";
+        } else if (fileService.existFileName(user.getUserId(),fileUpload.getOriginalFilename())) {
+            message = "The file already exists";
         } else {
             log.info("Entrando");
             String fileName = StringUtils.cleanPath(fileUpload.getOriginalFilename());
