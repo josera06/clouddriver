@@ -228,8 +228,8 @@ class CloudStorageApplicationTests {
 	@Test
 	public void testBadUrl() {
 		// Create a test account
-		doMockSignUp("URL","Test","UT","123");
-		doLogIn("UT", "123");
+		doMockSignUp("URL","Test","testBadUrl","123");
+		doLogIn("testBadUrl", "123");
 
 		// Try to access a random made-up URL.
 		driver.get("http://localhost:" + this.port + "/some-random-page");
@@ -284,8 +284,8 @@ class CloudStorageApplicationTests {
 	}
 	@Test
 	public void testHomePageAfterLogout(){
-		doMockSignUp("Large File","Test","LFT","123");
-		doLogIn("LFT", "123");
+		doMockSignUp("Large File","Test","testHomePageAfterLogout","123");
+		doLogIn("testHomePageAfterLogout", "123");
 		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
 
 		doLogout(webDriverWait);
@@ -296,17 +296,17 @@ class CloudStorageApplicationTests {
 
 	@Test
 	public void testAddNote(){
-		addNewNote("New note", "Description");
+		addNewNote("testAddNote", "testAddNoteDescription");
 		System.out.println("driver value" + driver.getPageSource());
-		Assertions.assertTrue(driver.getPageSource().contains("New note"));
+		Assertions.assertTrue(driver.getPageSource().contains("testAddNote"));
 	}
 
 	@Test
 	public void testDeleteNote(){
-		addNewNote("New note", "Description");
+		addNewNote("testDeleteNote", "testDeleteNoteDescription");
 		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
 		doLogout(webDriverWait);
-		doLogIn("LFT", "123");
+		doLogIn("New note", "123");
 		//Select Notes tab
 		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-notes-tab")));
 		WebElement navNotesTab = driver.findElement(By.id("nav-notes-tab"));
@@ -316,7 +316,7 @@ class CloudStorageApplicationTests {
 
 		System.out.println("Todo listo");
 
-		Assertions.assertFalse(driver.getPageSource().contains("New note"));
+		Assertions.assertFalse(driver.getPageSource().contains("testDeleteNote"));
 	}
 
 	@Test
@@ -324,7 +324,7 @@ class CloudStorageApplicationTests {
 		addNewNote("New note", "Description");
 		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
 		doLogout(webDriverWait);
-		doLogIn("LFT", "123");
+		doLogIn("New note", "123");
 		//Select Notes tab
 		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-notes-tab")));
 		WebElement navNotesTab = driver.findElement(By.id("nav-notes-tab"));
@@ -360,8 +360,8 @@ class CloudStorageApplicationTests {
 	}
 
 	public void addNewNote(String titleNote,String descriptionNote){
-		doMockSignUp("Large File","Test","LFT","123");
-		doLogIn("LFT", "123");
+		doMockSignUp(titleNote,"Test",titleNote,"123");
+		doLogIn(titleNote, "123");
 		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
 
 		//Select Notes tab
@@ -392,10 +392,10 @@ class CloudStorageApplicationTests {
 
 	@Test
 	public void testDeleteCredential(){
-		addCredential("www.google.com", "josera","1234");
+		addCredential("www.google.com", "testDeleteCredential","1234");
 		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
 		doLogout(webDriverWait);
-		doLogIn("LFT", "123");
+		doLogIn("testDeleteCredential", "123");
 		//Select Notes tab
 		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-credentials-tab")));
 		WebElement navNotesTab = driver.findElement(By.id("nav-credentials-tab"));
@@ -410,17 +410,17 @@ class CloudStorageApplicationTests {
 
 	@Test
 	public void testAddCredential(){
-		addCredential("www.google.com", "josera", "1234");
+		addCredential("www.google.com", "testAddCredential", "1234");
 		System.out.println("driver value" + driver.getPageSource());
 		Assertions.assertTrue(driver.getPageSource().contains("www.google.com"));
 	}
 
 	@Test
 	public void testEditCredential(){
-		addCredential("www.google.com" ,"josera", "1234");
+		addCredential("www.google.com" ,"testEditCredential", "1234");
 		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
 		doLogout(webDriverWait);
-		doLogIn("LFT", "123");
+		doLogIn("testEditCredential", "123");
 		//Select Notes tab
 		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-credentials-tab")));
 		WebElement navCredentialTab = driver.findElement(By.id("nav-credentials-tab"));
@@ -454,8 +454,8 @@ class CloudStorageApplicationTests {
 	}
 
 	public void addCredential(String url,String username,String password){
-		doMockSignUp("Large File","Test","LFT","123");
-		doLogIn("LFT", "123");
+		doMockSignUp("Add Credential","Test",username,"123");
+		doLogIn(username, "123");
 		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
 
 		//Select Notes tab
